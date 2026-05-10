@@ -1,0 +1,15 @@
+[submodule "megalodonte-base"]
+	path = megalodonte-base
+	url = https://github.com/eliezer-dev-software-enginner/megalodonte-base.git
+[submodule "megalodonte-reactivity"]
+	path = megalodonte-reactivity
+	url = https://github.com/eliezer-dev-software-enginner/megalodonte-reactivity.git
+[submodule "megalodonte-theme"]
+	path = megalodonte-theme
+	url = https://github.com/eliezer-dev-software-enginner/megalodonte-theme.git
+[submodule "megalodonte-router"]
+	path = megalodonte-router
+	url = https://github.com/eliezer-dev-software-enginner/megalodonte-router.git
+[submodule "megalodonte-components"]
+	path = megalodonte-components
+	url = https://github.com/eliezer-dev-software-enginner/megalodonte-components.git

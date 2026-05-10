@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="VcsDirectoryMappings">
+    <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/megalodonte-base" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/megalodonte-components" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/megalodonte-reactivity" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/megalodonte-router" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/megalodonte-theme" vcs="Git" />
+  </component>
+</project>

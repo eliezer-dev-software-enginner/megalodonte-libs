@@ -31,3 +31,24 @@ public class MyTheme implements ThemeInterface { ... }
 ThemeManager.setTheme(new MyTheme());
 ```
 Sem depender de interface fantasma.
+
+## 2026-06-03 — Context.useRouter builder pattern + RouterBase.entrypoint()
+
+**Problema**: O padrão de uso exigia duas chamadas — `context.useRouter(router)` e `context.useView(router.entrypoint())` — e o retorno de `useRouter` (`RouterBase`) não era usado.
+
+**Mudanças**:
+1. `RouterBase` ganhou o método `RouteResult entrypoint()` (v3 e v4 Router já tinham)
+2. `Context.useRouter(RouterBase)` faz `bind()` e retorna `Context.RouterBuilder` (tipo intermediário)
+3. `RouterBuilder.start()` é o método terminal que chama `useView(router.entrypoint())`
+4. v3/Router: removido `RouteResult` e `RouteProps` duplicados — agora usa os da base
+5. README atualizado com o novo padrão
+
+**Resultado**:
+```java
+// Antes
+context.useRouter(router);
+context.useView(router.entrypoint().view());
+
+// Depois
+context.useRouter(router).start();
+```

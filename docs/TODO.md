@@ -9,5 +9,7 @@
 - [x] Atualizar testes (DefaultThemeTest, ThemeManagerTest)
 - [x] Compilação bem-sucedida (base + theme + components)
 
+- [x] Refatorar Context.useRouter: bind + retorna RouterBuilder; start() é o método terminal que configura a view
+
 ## Pendências
 - Nenhuma pendência conhecida

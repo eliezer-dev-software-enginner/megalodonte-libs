@@ -29,4 +29,4 @@ Após cada tarefa:
 - Mantenha os arquivos concisos.
 
 Prompt:
-Fiz uma alteração recente em ThemeInterface dentro de megalodonte-base deixando-a mais simples, mas em megalodonte-components ainda não estamos usando a nova implementação no tema padrão. Corrija isso para mim.
+Não estou gostando de "megalodonte-components" importar diretamente "megalodonte-reactivity", ao invés disso ele deveria trabalhar com interfaces de reatividade do "megalodonte-base", ou seja ele deveria precisar mesmo é do pacote base, ou seja o "megalodonte-base"

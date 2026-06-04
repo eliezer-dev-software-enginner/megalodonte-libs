@@ -11,5 +11,9 @@
 
 - [x] Refatorar Context.useRouter: bind + retorna RouterBuilder; start() é o método terminal que configura a view
 
+- [x] Mover ForEachState de megalodonte-reactivity para megalodonte-base
+- [x] Remover dependência de megalodonte-reactivity de megalodonte-components
+- [x] Atualizar imports nos componentes (LayoutComponent, Row, Column usam megalodonte.base.state.ForEachState)
+
 ## Pendências
 - Nenhuma pendência conhecida

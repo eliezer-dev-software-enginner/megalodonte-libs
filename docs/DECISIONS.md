@@ -1,5 +1,17 @@
 # Decisões Arquiteturais
 
+## 2026-06-04 — ForEachState movido para megalodonte-base; components sem dependência de reactivity
+
+**Problema**: megalodonte-components importava diretamente megalodonte-reactivity (ForEachState), criando acoplamento desnecessário. Components deveria depender apenas de interfaces de reatividade do pacote base.
+
+**Decisão**:
+1. Criada interface `ForEachState<T, C>` em `megalodonte.base.state` (base) — expõe `getComponents()` e `getState()`
+2. Implementação concreta mantida em `megalodonte.ForEachState` (reactivity) — implementa a interface da base
+3. Removida dependência `megalodonte-reactivity` de megalodonte-components/build.gradle.kts
+4. Components usam apenas a interface (`megalodonte.base.state.ForEachState`) — acoplamento frouxo
+
+**Motivo**: megalodonte-base deve conter apenas contratos (interfaces). A implementação (lógica de reconciliação) pertence ao módulo de reatividade. Components depende apenas da abstração, permitindo trocar a implementação sem afetar os componentes.
+
 ## 2026-06-03 — Alinhamento à ThemeInterface simplificada
 
 **Problema**: ThemeInterface foi simplificada em megalodonte-base (removido `radius()` e `ThemeRadius`, mesclado em `ThemeBorder`), mas megalodonte-theme e megalodonte-components ainda usavam a API antiga.

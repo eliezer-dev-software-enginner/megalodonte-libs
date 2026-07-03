@@ -64,3 +64,16 @@ context.useView(router.entrypoint().view());
 // Depois
 context.useRouter(router).start();
 ```
+
+## 2026-07-02 — SelectProps com estilização inline + tema (padrão InputProps)
+
+**Problema**: SelectProps não suportava estilização inline nem fallback ao tema, ao contrário de InputProps, ButtonProps e demais componentes.
+
+**Decisão**:
+1. SelectProps muda de `extends Props` para `extends TextComponentProps<SelectProps>` — herda fontSize, fontWeight, textColor
+2. Adicionados campos: `bgColor`, `borderColor`, `borderWidth`, `borderRadius` com fluent setters
+3. Adicionados `tone(TextTone)` e `variant(TextVariant)` para cor de texto via tema
+4. Adicionado `disable()` para desabilitar o ComboBox
+5. `applyTheme` usa `StyleUtils.getFinal*()` para fallback ao tema quando valor inline não é definido
+
+**Motivo**: Consistência entre os Props — todos os componentes devem seguir o mesmo padrão de estilização inline + tema.

@@ -13,6 +13,6 @@
 - megalodonte-router: depende de base
 
 ## Última alteração
-- Criada interface ForEachState em megalodonte-base (megalodonte.base.state)
-- Implementação concreta mantida em megalodonte-reactivity (megalodonte.ForEachState implements base.state.ForEachState)
-- megalodonte-components depende apenas da interface da base, não mais de megalodonte-reactivity
+- SelectProps refatorado para estender TextComponentProps (herdando fontSize, fontWeight, textColor)
+- Adicionados bgColor, borderColor, borderWidth, borderRadius, tone, variant, disable com fallback ao tema via StyleUtils
+- SelectProps agora suporta estilização inline + tema, mesmo padrão de InputProps

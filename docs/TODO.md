@@ -15,5 +15,7 @@
 - [x] Remover dependência de megalodonte-reactivity de megalodonte-components
 - [x] Atualizar imports nos componentes (LayoutComponent, Row, Column usam megalodonte.base.state.ForEachState)
 
+- [x] SelectProps com estilização inline + tema (como InputProps)
+
 ## Pendências
 - Nenhuma pendência conhecida

@@ -29,4 +29,4 @@ Após cada tarefa:
 - Mantenha os arquivos concisos.
 
 Prompt:
-Não estou gostando de "megalodonte-components" importar diretamente "megalodonte-reactivity", ao invés disso ele deveria trabalhar com interfaces de reatividade do "megalodonte-base", ou seja ele deveria precisar mesmo é do pacote base, ou seja o "megalodonte-base"
+como feito em InputProps eu quero que SelectProps também possa ter estilização inline e via tema.

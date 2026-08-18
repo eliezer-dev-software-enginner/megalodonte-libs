@@ -1,5 +1,25 @@
 # Decisões Arquiteturais
 
+## 2026-08-18 — `Scope` em `megalodonte.base.async`: cancelamento de trabalho assíncrono vinculado ao ciclo de vida
+
+**Problema**: `Async.Run()` é fire-and-forget puro — não retorna handle, não tem vínculo com nenhuma tela/ViewModel. Isso deixa uma corrida estrutural em qualquer tela que abra algo assíncrono no `onMount()` (conexão, listener, timer) e feche em `onDestroy()`: se `onDestroy()` rodar antes da tarefa assíncrona terminar de adquirir o recurso, o `null`-check de guarda não pega nada, o recurso termina de abrir depois e nunca mais é fechado — a tarefa segura referência viva pro objeto todo via closure, impedindo o GC. Achado na prática no app `balanca-gobitech` (`PesagemViewModel.iniciarLeituraBalanca()`/`pararLeituraBalanca()`, ver `DECISIONS.md` de lá) e corrigido ali com uma flag `destruido` manual — mas o gap é de framework, não desse app: qualquer novo dev pode reintroduzir a mesma corrida.
+
+**Decisão — Fase 1 (esta entrada), isolada e aditiva**: `megalodonte.base.async.Scope` — cobre um ciclo de vida (uma tela, uma ViewModel), não reutilizável depois de cancelado:
+- `run(RunnableThrowing)`: roda a task numa thread virtual só se o escopo ainda não tiver sido cancelado no instante em que ela começa a executar.
+- `onCancel(Runnable)`: registra limpeza pra rodar quando `cancel()` acontecer — ou dispara na hora, síncrono, se o escopo já estava cancelado no momento do registro (cobre o caso do recurso que terminou de abrir depois do cancelamento).
+- `cancel()`/`isCancelled()`: idempotente, síncrono, barato — mesma filosofia do `job.cancel()` do Kotlin (cancelar é instantâneo, quem termina de forma assíncrona é o trabalho em si, cooperando).
+- Testado em `ScopeTest` (7 casos, JUnit puro, sem JavaFX) — `./gradlew test` em `megalodonte-base`: BUILD SUCCESSFUL.
+
+**Decisão — Fase 2 (2026-08-18, mesma sessão): cancelamento automático no Router**. `megalodonte-base` publicado em `mavenLocal` (`./gradlew publishToMavenLocal`). Em seguida, no `megalodonte-router` (v4):
+- `ScreenContext` ganhou um `Scope` próprio, criado junto no construtor, exposto via `ctx.scope()`.
+- `Router.activeScreens` passou de `Map<Stage, ScreenComponent>` pra `Map<Stage, ActiveScreen>` (`ActiveScreen` = record local `(ScreenComponent screen, ScreenContext ctx)`), única mudança de forma — os 3 pontos que já chamavam `.onDestroy()` (`resolveWithStage`, `destroyAndCloseStage`, o `setOnCloseRequest` de `spawnWindow`) agora chamam `ctx.scope().cancel()` **antes** de `screen.onDestroy()`.
+- Resultado: qualquer tela que trocar `Async.Run(...)` por `ctx.scope().run(...)` ganha cancelamento automático ao navegar pra fora — sem precisar lembrar de nada, igual `viewModelScope` cancela sozinho no `onCleared()`. API pública do Router não mudou (só um método novo em `ScreenContext`), mudança é retrocompatível — telas que não usam `ctx.scope()` continuam exatamente como antes.
+- `megalodonte-router` também publicado em `mavenLocal`. Validado ponta a ponta contra o `balanca-gobitech`: `./gradlew --refresh-dependencies compileJava test` → **BUILD SUCCESSFUL, 155/155 testes**, sem nenhuma mudança de código nesse app (prova que a mudança é aditiva/não-quebra).
+
+**Ainda não feito**: Fase 3 (migrar `PesagemViewModel` do `balanca-gobitech` pra usar `ctx.scope()` em vez da flag `destruido` manual, dogfooding a API onde o bug apareceu) e Fase 4 (auditar `plics-sw` e outros apps Megalodonte atrás do mesmo padrão de risco).
+
+**Motivo**: fechar a mesma classe de bug na raiz (framework) em vez de patch por tela — sem isso, cada app que usa `Async.Run` dentro de `onMount` pra abrir algo de vida longa é candidato a reintroduzir o mesmo vazamento.
+
 ## 2026-06-04 — ForEachState movido para megalodonte-base; components sem dependência de reactivity
 
 **Problema**: megalodonte-components importava diretamente megalodonte-reactivity (ForEachState), criando acoplamento desnecessário. Components deveria depender apenas de interfaces de reatividade do pacote base.

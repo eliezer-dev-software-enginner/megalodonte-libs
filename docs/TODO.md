@@ -1,6 +1,11 @@
 # TODO
 
 ## Concluído
+- [x] `ListState.set()` usava `Objects.equals()` (conteúdo) em vez de `==` (identidade) pra
+      decidir se notifica listeners — `updateIf()` mutando in-place e devolvendo a mesma
+      referência ficava sem notificar. Achado via bug real no `balanca-gobitech` (edição de
+      Cliente não refletia na UI). `ListStateUpdateIfBugTest` prova o cenário. Republicado em
+      `mavenLocal`, validado: 155/155 no `balanca-gobitech`. Ver `DECISIONS.md`.
 - [x] `megalodonte.base.async.Scope` (cancelamento de trabalho assíncrono vinculado ao ciclo de
       vida) — `ScopeTest` (7 casos), `./gradlew test`: BUILD SUCCESSFUL. Ver `DECISIONS.md`.
 - [x] `megalodonte-base` e `megalodonte-router` publicados em `mavenLocal`

@@ -1,5 +1,33 @@
 # Decisões Arquiteturais
 
+## 2026-08-18 — `ListState.set()` bloqueava notificação quando `updateIf()` mutava e devolvia a mesma referência
+
+**Problema**: usuário relatou no `balanca-gobitech` que editar um Cliente e salvar não atualizava
+a tabela ao voltar pra lista. Achado por leitura de código, confirmado com um teste isolado antes
+de mexer: `ListState.set(List<E> newList)` tinha uma guarda `Objects.equals(this.value, newList)`
+pra evitar notificar listeners à toa — mas `Objects.equals` numa `List` compara **conteúdo**
+elemento a elemento via `equals()` de cada item, não identidade da lista em si.
+
+`updateIf()` (chamado por todo `handleAddOrUpdate()` de tela CRUD ao editar) muta o objeto **já
+presente** na lista e devolve a **mesma referência** pro updater — padrão comum (`model =
+clienteSelecionado.get()`, muta os setters, devolve `model`). A "lista nova" construída por
+`updateIf()` tem exatamente os mesmos objetos (mesmas referências) da lista antiga — como a
+maioria dos Models do app só tem `@Getter @Setter` (sem `@EqualsAndHashCode`), a comparação usa
+`Object.equals()` (identidade) por elemento, então `newList.equals(oldList)` dava `true` mesmo
+com os campos do objeto tendo mudado de verdade — `set()` cancelava a notificação achando que
+"nada mudou". A tabela só voltava a mostrar o dado certo depois de um refetch completo do banco
+(trocar de seção e voltar), nunca imediatamente ao salvar.
+
+**Decisão**: trocar a guarda de `Objects.equals(this.value, newList)` (conteúdo) pra
+`this.value == newList` (identidade da lista). Continua bloqueando o caso realmente redundante —
+chamar `set()` de novo com a exata mesma referência de lista — sem falso-negativo quando o
+conteúdo mudou mas os objetos internos são os mesmos.
+
+**Testado**: `ListStateUpdateIfBugTest` (`megalodonte-reactivity`) — reproduz o cenário exato
+(item mutado in-place, `updateIf` devolvendo a mesma referência) e falhava antes do fix. Depois
+do fix, passa. `megalodonte-reactivity` republicado em `mavenLocal`; validado ponta a ponta contra
+`balanca-gobitech` (`--refresh-dependencies compileJava test`: 155/155, sem regressão).
+
 ## 2026-08-18 — `Scope` em `megalodonte.base.async`: cancelamento de trabalho assíncrono vinculado ao ciclo de vida
 
 **Problema**: `Async.Run()` é fire-and-forget puro — não retorna handle, não tem vínculo com nenhuma tela/ViewModel. Isso deixa uma corrida estrutural em qualquer tela que abra algo assíncrono no `onMount()` (conexão, listener, timer) e feche em `onDestroy()`: se `onDestroy()` rodar antes da tarefa assíncrona terminar de adquirir o recurso, o `null`-check de guarda não pega nada, o recurso termina de abrir depois e nunca mais é fechado — a tarefa segura referência viva pro objeto todo via closure, impedindo o GC. Achado na prática no app `balanca-gobitech` (`PesagemViewModel.iniciarLeituraBalanca()`/`pararLeituraBalanca()`, ver `DECISIONS.md` de lá) e corrigido ali com uma flag `destruido` manual — mas o gap é de framework, não desse app: qualquer novo dev pode reintroduzir a mesma corrida.

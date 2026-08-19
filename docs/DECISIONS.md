@@ -1,5 +1,13 @@
 # Decisões Arquiteturais
 
+## 2026-08-19 — Revertido `setMaxWidth`/`setMaxHeight` em `ScreenContext.applyStageProps`
+
+Adicionado ontem (2026-08-18) pra impedir uma Stage `resizable=true` de crescer sozinha além do
+tamanho declarado da rota — travava também o usuário maximizando de propósito, contradizendo
+`screenIsExpandable=true`. Revertido; ver `balanca-gobitech/docs/DECISIONS.md` (mesma data) pro
+relato completo, incluindo por que o problema original já tinha correção no nível certo (no
+conteúdo, não na janela) antes desse teto ter sido adicionado.
+
 ## 2026-08-18 — `ListState.set()` bloqueava notificação quando `updateIf()` mutava e devolvia a mesma referência
 
 **Problema**: usuário relatou no `balanca-gobitech` que editar um Cliente e salvar não atualizava

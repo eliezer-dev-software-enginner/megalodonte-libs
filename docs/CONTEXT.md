@@ -13,6 +13,7 @@
 - megalodonte-router: depende de base
 
 ## Última alteração
-- SelectProps refatorado para estender TextComponentProps (herdando fontSize, fontWeight, textColor)
-- Adicionados bgColor, borderColor, borderWidth, borderRadius, tone, variant, disable com fallback ao tema via StyleUtils
-- SelectProps agora suporta estilização inline + tema, mesmo padrão de InputProps
+- Router v5 (`megalodonte-router`) reduzido a navegação pura
+- `megalodonte-base` passa a guardar as rotas (`RouteTable`) e o lifecycle de telas (`ScreenManager`)
+- `spawnWindow` implementado em `megalodonte.base.route.v2.ScreenContextBase`
+- `RouterBase` sem `spawnWindow` no contrato (spawn fica no ScreenContext)

@@ -1,5 +1,48 @@
 # Decisões Arquiteturais
 
+## 2026-09-20 — Router v5: spawn, storage de rotas e lifecycle movidos para megalodonte-base
+
+**Problema**: `megalodonte-router` v5 concentrava três responsabilidades no mesmo `Router` —
+guardar as rotas (record aninhado `Router.Route` + matching `${param}` em `resolveRoute`),
+gerenciar janelas spawnadas (`spawnWindow`, `spawnedWindowList`, `destroyAndCloseStage`) e
+navegar. Isso duplicava tipos que já existiam (ou estavam sendo movidos) para a base (`Route`,
+`ScreenFactory`, `RouteResolutionException`, `RouteNotFoundException`) e mantinha estado de janela
+(`spawnedWindowList`) num local marcado com `TODO: talvez devesse ficar no contexto da aplicação
+base`. O `spawnWindow` inteiro morava no Router — para o Router "só navegar", ele precisava sair.
+
+**Decisão**:
+1. `megalodonte-base` vira dono das rotas e do lifecycle de telas:
+   - `megalodonte.base.route.RouteTable`: guarda o `Set<Route>` + entrypoint e resolve o caminho
+     (matching `${param}`) — o "guardar as Route" passa a ser responsabilidade da base.
+   - `megalodonte.base.route.ScreenManager`: concentra `Map<Stage, ActiveScreen>`,
+     `List<Stage> spawnedWindows`, `mount()` (destrói a tela anterior, cria o `ScreenContextBase`,
+     cria a screen, chama `onMount`), `destroy()`, `closeAllSpawned()` e `extractView()` — o ciclo
+     de vida (`scope().cancel()` + `onDestroy()` nos pontos de teardown) sai do Router e vira
+     única fonte da verdade, compartilhada por navegação e spawn.
+   - `ScreenContextBase` (v2) implementa `spawnWindow(path)` / `spawnWindow(path, errorHandler)`
+     de verdade — cria a `Stage`, resolve+monta via `ScreenManager`, aplica `RouteProps` (título,
+     ícone, resizable), mostra e registra o `setOnCloseRequest` (destroy via `ScreenManager`).
+     `ScreenContextInterface` (v2) ganha as duas assinaturas de spawn.
+2. `RouterBase` volta a ser navegação pura: `bind`, `entrypoint`, `navigateOnStage`,
+   `navigateAndCloseOthers`, `mainStage`. Removido `spawnWindow` do contrato.
+3. Router v5 (`megalodonte.router.v5.Router`) passa a ser apenas navegação: resolve via
+   `RouteTable` e monta via `ScreenManager`. Removidos do pacote v5: `ScreenContext` (subclasse
+   vazia), `ScreenFactory` (dup) e `RouteResolutionException` (dup) — os tipos equivalentes agora
+   vivem na base.
+4. v4 (`megalodonte.router.v4`) e os apps consumidores (`balanca-gobitech`, `plics-sw`) NÃO são
+   tocados — continuam na própria API (`ctx.router().spawnWindow(...)`). Sem impacto de regressão.
+
+**Uso novo (v5)**:
+```java
+RouteTable table = new RouteTable(new AppRoutes().routes(), Screens.SPLASH.name());
+context.useRouter(new Router(table)).start();
+// dentro das telas:
+ctx.spawnWindow(path); // antes: ctx.router().spawnWindow(path)
+```
+
+**Validação**: `megalodonte-base` publicado em `mavenLocal` (`publishToMavenLocal`) e
+`megalodonte-router` compilado contra a base nova.
+
 ## 2026-08-19 — Revertido `setMaxWidth`/`setMaxHeight` em `ScreenContext.applyStageProps`
 
 Adicionado ontem (2026-08-18) pra impedir uma Stage `resizable=true` de crescer sozinha além do

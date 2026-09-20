@@ -1,6 +1,13 @@
 # TODO
 
 ## Concluído
+- [x] Router v5: `spawnWindow` movido para `ScreenContextBase` (base), rotas guardadas na base
+      (`RouteTable`) e lifecycle de telas concentrado em `ScreenManager` (`activeScreens`,
+      `spawnedWindows`, `mount`/`destroy`/`closeAllSpawned`/`extractView`). Router v5 vira
+      navegação pura; removidos `ScreenContext`/`ScreenFactory`/`RouteResolutionException` do
+      pacote v5. Validado: base + router compilados; base publicado em `mavenLocal`. Ver
+      `DECISIONS.md`.
+
 - [x] `ListState.set()` usava `Objects.equals()` (conteúdo) em vez de `==` (identidade) pra
       decidir se notifica listeners — `updateIf()` mutando in-place e devolvendo a mesma
       referência ficava sem notificar. Achado via bug real no `balanca-gobitech` (edição de
@@ -35,6 +42,3 @@
 - [x] Atualizar imports nos componentes (LayoutComponent, Row, Column usam megalodonte.base.state.ForEachState)
 
 - [x] SelectProps com estilização inline + tema (como InputProps)
-
-## Pendências
-- Nenhuma pendência conhecida do plano de cancelamento estruturado (Fases 1-4 concluídas).

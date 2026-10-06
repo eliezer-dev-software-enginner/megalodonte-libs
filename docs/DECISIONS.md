@@ -1,5 +1,13 @@
 # Decisões Arquiteturais
 
+## 2026-10-06 — Repositórios de core e reatividade portátil
+
+Os repositórios recém-clonados foram alinhados aos diretórios dos fontes,
+preservando seus históricos iniciais. Core e reatividade portátil passam a ser
+submódulos Git, seguindo o padrão das bibliotecas existentes. Os fontes continuam
+nos mesmos caminhos usados pelos builds compostos Android; clones novos precisam
+inicializar os submódulos. Commits locais não implicam publicação nos remotos.
+
 ## 2026-10-06 — Core comum e tema sem JavaFX transitivo
 
 **Contexto:** o Android tinha facades locais de tema, e o tema real puxava base,

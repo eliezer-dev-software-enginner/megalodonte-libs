@@ -13,7 +13,8 @@
 - [ ] Executor/dispatcher/logging neutros para Async/Scope/UI/ErrorReporter.
 - [ ] Models de Table/Select/Date/Currency/recursos e props/layouts compartilháveis.
 - [ ] Paridade Android restante — ver COMPATIBILITY.md no projeto Android.
-- [ ] Versionamento de migração; novos repos/submódulos para core/portable.
+- [x] Repositórios próprios e submódulos para core/portable.
+- [ ] Versionamento de migração antes de distribuição externa.
 
 ## Concluído
 - [x] Router v5: `spawnWindow` movido para `ScreenContextBase` (base), rotas guardadas na base

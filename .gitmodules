@@ -13,3 +13,9 @@
 [submodule "megalodonte-components"]
 	path = megalodonte-components
 	url = https://github.com/eliezer-dev-software-enginner/megalodonte-components.git
+[submodule "megalodonte-core"]
+	path = megalodonte-core
+	url = https://github.com/eliezer-dev-software-enginner/megalodonte-core.git
+[submodule "megalodonte-reactivity-portable"]
+	path = megalodonte-reactivity-portable
+	url = https://github.com/eliezer-dev-software-enginner/megalodonte-reactivity-portable.git

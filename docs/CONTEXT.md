@@ -16,7 +16,7 @@
 - Análise, inventário e matriz completa: projeto irmão megalodonte-android/docs.
 - Instrumentação Android de widgets/tema/descarte passou em emulador API 37;
   API 35/rotação/layouts avançados ainda exigem validação específica.
-- Novos core/portable são pastas do umbrella nesta etapa; remotos/submódulos futuros.
+- Core/portable têm repositórios próprios e são submódulos do umbrella.
 
 As notas de dependência anteriores abaixo registram a estrutura pré-extração.
 

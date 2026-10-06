@@ -1,5 +1,20 @@
 # TODO
 
+## Multiplataforma — 2026-10-06
+
+- [x] Auditar todas as bibliotecas; análise/inventário no projeto Android/docs.
+- [x] Extrair core neutro, estados e contratos de tema/escala/lifecycle/capacidades.
+- [x] Tema real com api(core), release 17 e teste habilitado.
+- [x] Reatividade portátil a partir dos mesmos fontes; descarte de assinaturas.
+- [x] RouteMatcher comum e integração na RouteTable JavaFX.
+- [x] Recompilar todos os módulos desktop e clientes originais Android 1–4.
+- [ ] Component/Props/eventos neutros com contratos por método.
+- [ ] Navigator/ScreenFactory sem Stage/Scene e adapter WindowHost separado.
+- [ ] Executor/dispatcher/logging neutros para Async/Scope/UI/ErrorReporter.
+- [ ] Models de Table/Select/Date/Currency/recursos e props/layouts compartilháveis.
+- [ ] Paridade Android restante — ver COMPATIBILITY.md no projeto Android.
+- [ ] Versionamento de migração; novos repos/submódulos para core/portable.
+
 ## Concluído
 - [x] Router v5: `spawnWindow` movido para `ScreenContextBase` (base), rotas guardadas na base
       (`RouteTable`) e lifecycle de telas concentrado em `ScreenManager` (`activeScreens`,

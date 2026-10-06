@@ -1,6 +1,8 @@
 $ROOT_DIR = Split-Path -Parent $MyInvocation.MyCommand.Path
 
 $PROJECTS = @(
+    "megalodonte-core",
+    "megalodonte-reactivity-portable",
     "megalodonte-base",
     "megalodonte-reactivity",
     "megalodonte-theme",

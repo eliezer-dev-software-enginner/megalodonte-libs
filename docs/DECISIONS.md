@@ -1,5 +1,34 @@
 # Decisões Arquiteturais
 
+## 2026-10-06 — Core comum e tema sem JavaFX transitivo
+
+**Contexto:** o Android tinha facades locais de tema, e o tema real puxava base,
+ScaleProvider/Screen e bytecode Java 25. O usuário pediu contratos e reaproveitamento.
+
+**Decisão:** mover estado e todo o pacote de tema/escala para megalodonte-core,
+mantendo FQCNs e exportando-os no módulo JPMS neutro. Base requer core
+transitivamente; adapters de fonte/Scene/Screen ficam em megalodonte.platform.javafx.
+ThemePlatform fornece hooks transitórios, mantendo chamadas de fonte em source.
+DefaultTheme depende somente de core; ambos geram bytecode Java 17 com toolchain 25.
+
+Reactivity-portable prepara quatro fontes neutros do reactivity original, sem
+Show/JavaFX/module-info. Isso evita um fork lógico enquanto os pacotes legados
+misturam UI e modelos. Não combinar os artefatos desktop/portable na mesma aplicação.
+
+Assinaturas ganham handles idempotentes e remoção real. Map é lazy por assinante;
+ComputedState/ForEachState são closeable. ListenerManager usa cleanup registrado.
+Lifecycle, versão/capacidades e matcher de rotas são comuns. Rota literal precede
+parâmetro; empate ambíguo é erro, em vez de seleção dependente da ordem de Set.
+
+**Validação:** core/tema/portable testados; base/components/router/reactivity
+recompilaram. Android executa fontes originais dos apps 1–4 como fixtures.
+
+**Migração:** recompilar consumidores desktop; applyFontFamily(Object) não tem
+o descritor binário antigo Scene. Bootstrap instala adapters antes do FontLoader;
+chamadas externas precisam instalar JavaFxPlatform primeiro. Incrementar versão
+antes de distribuir essa migração; a beta atual foi mantida somente para uso local.
+Contratos de Component/Props/router/async completos ainda estão pendentes.
+
 ## 2026-09-20 — Router v5: spawn, storage de rotas e lifecycle movidos para megalodonte-base
 
 **Problema**: `megalodonte-router` v5 concentrava três responsabilidades no mesmo `Router` —

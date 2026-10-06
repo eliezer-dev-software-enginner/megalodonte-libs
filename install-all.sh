@@ -3,6 +3,8 @@
 ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 PROJECTS=(
+  "megalodonte-core"
+  "megalodonte-reactivity-portable"
   "megalodonte-base"
   "megalodonte-reactivity"
   "megalodonte-theme"
